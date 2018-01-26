@@ -8,3 +8,6 @@ def hello(request):
     return  render(request, 'hello.html',context)
     # return HttpResponse('hello world')
 
+def index(request):
+    return HttpResponse("hello, this is mysite/view.py")
+
