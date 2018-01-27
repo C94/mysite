@@ -1,20 +1,32 @@
+# -*— coding:utf-8 -*-
 from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
+from django.views import generic
+from django.utils import timezone
 
 from .models import Question,Choice
 
 
-def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:10]
-    # template = loader.get_template('polls/index.html') #另一种输出方法1
-    context = {
-        'latest_question_list': latest_question_list,
-    }
-    # output = ' , '.join([q.question_text for q in latest_question_list]) #另一种输出方法2
-    # return HttpResponse(template.render(context, request))  #另一种输出方法1
-    return render(request, 'polls/index.html', context) #另一种输出方法3
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        """返回最新发布时间的10条数据"""
+        # return Question.objects.order_by('-pub_date')[:10]
+        return Question.objects.filter(
+            pub_date__lte = timezone.now()
+        ).order_by('-pub_date')[:10]
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
 
 # 详情页面
 def detail(request, question_id):
