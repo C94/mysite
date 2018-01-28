@@ -21,8 +21,17 @@ class IndexView(generic.ListView):
         ).order_by('-pub_date')[:10]
 
 class DetailView(generic.DetailView):
+    # 问题详情页
     model = Question
     template_name = 'polls/detail.html'
+
+    def get_queryset(self):
+        """
+            Excludes any questions that aren't published yet.
+            不包含没有发布的问题
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
 
 class ResultsView(generic.DetailView):
     model = Question

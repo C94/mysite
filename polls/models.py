@@ -14,6 +14,9 @@ class Question(models.Model):
         now = timezone.now()
         # 介于昨天和现在当前时间
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
+    was_published_recently.admin_order_field = 'pub_date'
+    was_published_recently.boolean = True
+    was_published_recently.short_description = '最近发布时间'
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
